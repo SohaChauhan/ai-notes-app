@@ -131,7 +131,7 @@ export default function Notes() {
         notes?.map((note) => (
           <div
             key={note.id}
-            className="border rounded-xl p-5 space-y-2 bg-background"
+            className="border rounded-xl p-5 space-y-2 bg-accent"
           >
             <div className="flex justify-between">
               <h3 className="font-semibold text-lg">

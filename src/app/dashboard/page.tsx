@@ -23,7 +23,7 @@ export default function HomePage() {
     return;
   } else {
     return (
-      <main className="p-6 space-y-6 bg-accent">
+      <main className="p-6 space-y-6 bg-background">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">Your Notes</h2>
           <div className="flex space-x-5 items-center">
