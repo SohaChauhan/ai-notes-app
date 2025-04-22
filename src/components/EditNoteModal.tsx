@@ -30,12 +30,12 @@ export default function EditNoteModal({
   const [tags, setTags] = useState(note.tags?.join(", ") || "");
 
   const handleSave = () => {
-    const labelArray = tags
+    const tagArray = tags
       .split(",")
       .map((tags) => tags.trim())
       .filter(Boolean);
 
-    onSave({ id: note.id, title, content, tags: labelArray });
+    onSave({ id: note.id, title, content, tags: tagArray });
     setOpen(false);
   };
 

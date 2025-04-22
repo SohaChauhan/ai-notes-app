@@ -14,23 +14,31 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import EditNoteModal from "./EditNoteModal";
 import { useSummarize } from "@/lib/useSummarize";
-
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Heart, HeartOff } from "lucide-react";
 export default function Notes() {
   const user = useUser();
   const queryClient = useQueryClient();
-
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [addNote, setAddNote] = useState(false);
+  const [title, setTitle] = useState("Title");
+  const [content, setContent] = useState("Content");
   const [tags, setTags] = useState("");
-  const [filterLabel, setFilterLabel] = useState("");
+  const [filterTag, setFilterTag] = useState("");
   const [onlyFavorites, setOnlyFavorites] = useState(false);
 
   const summarize = useSummarize();
   const [currentSummary, setCurrentSummary] = useState("");
 
   const { data: notes, isLoading } = useQuery({
-    queryKey: ["notes", filterLabel, onlyFavorites],
-    queryFn: () => getNotes(user!.id, filterLabel, onlyFavorites),
+    queryKey: ["notes", filterTag, onlyFavorites],
+    queryFn: () => getNotes(user!.id, filterTag, onlyFavorites),
     enabled: !!user,
   });
 
@@ -56,49 +64,57 @@ export default function Notes() {
   });
 
   const handleSubmit = () => {
-    const labelArray = tags.split(",").map((label) => label.trim());
+    const tagArray = tags.split(",").map((tag) => tag.trim());
     createMutation.mutate({
       userId: user!.id,
       title,
       content,
-      tags: labelArray,
+      tags: tagArray,
     });
     setTitle("");
     setContent("");
     setTags("");
+    setAddNote(false);
   };
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold">Your Notes</h2>
-
       {/* Input Section */}
-      <div className="space-y-2">
-        <Input
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <Input
-          placeholder="Content"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        />
-        <Input
-          placeholder="Tags (comma separated)"
-          value={tags}
-          onChange={(e) => setTags(e.target.value)}
-        />
-        <Button onClick={handleSubmit}>Add Note</Button>
-      </div>
+
+      <Dialog open={addNote} onOpenChange={setAddNote}>
+        <DialogTrigger asChild>
+          <Button variant="default">Add a new Note</Button>
+        </DialogTrigger>
+        <DialogContent className="space-y-0.5">
+          <DialogHeader>
+            <DialogTitle>New Note</DialogTitle>
+          </DialogHeader>
+          <Input
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <Textarea
+            placeholder="Content"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+          />
+          <Input
+            placeholder="Tags (comma separated)"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+          />
+          <Button onClick={handleSubmit}>Save</Button>
+        </DialogContent>
+      </Dialog>
 
       {/* Filters */}
       <div className="space-x-2 mt-4">
         <Input
-          placeholder="Filter by label..."
-          value={filterLabel}
-          onChange={(e) => setFilterLabel(e.target.value)}
-          className="inline w-auto"
+          placeholder="Filter by tag..."
+          value={filterTag}
+          onChange={(e) => setFilterTag(e.target.value)}
+          className="inline w-auto bg-background"
         />
         <Button
           variant="outline"
@@ -113,11 +129,20 @@ export default function Notes() {
         <p>Loading...</p>
       ) : (
         notes?.map((note) => (
-          <div key={note.id} className="border rounded p-2 space-y-2">
+          <div
+            key={note.id}
+            className="border rounded-xl p-5 space-y-2 bg-background"
+          >
             <div className="flex justify-between">
-              <h3 className="font-semibold">{note.title}</h3>
+              <h3 className="font-semibold text-lg">
+                {note.title}
+                <p className="text-sm flex gap-1 font-normal">
+                  <span>{new Date(note.created_at).toLocaleDateString()}</span>|
+                  <span>{new Date(note.created_at).toLocaleTimeString()}</span>
+                </p>
+              </h3>
               <Button
-                variant={note.is_favorite ? "secondary" : "outline"}
+                variant={note.is_favorite ? "destructive" : "default"}
                 onClick={() =>
                   toggleFavoriteMutation.mutate({
                     id: note.id,
@@ -125,9 +150,11 @@ export default function Notes() {
                   })
                 }
               >
-                {note.is_favorite ? "Unfavorite" : "Favorite"}
+                {note.is_favorite ? <HeartOff /> : <Heart />}
               </Button>
             </div>
+
+            <p className="text-xs"></p>
             <p>{note.content}</p>
             {note.tags?.length > 0 && (
               <p className="text-sm text-gray-600">

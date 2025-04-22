@@ -2,7 +2,7 @@ import { supabase } from "./supabaseClient";
 
 export const getNotes = async (
   userId: string,
-  labelFilter = "",
+  tagFilter = "",
   onlyFavorites = false
 ) => {
   let query = supabase
@@ -11,7 +11,7 @@ export const getNotes = async (
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
 
-  if (labelFilter) query = query.contains("tags", [labelFilter]);
+  if (tagFilter) query = query.contains("tags", [tagFilter]);
   if (onlyFavorites) query = query.eq("is_favorite", true);
 
   const { data, error } = await query;
