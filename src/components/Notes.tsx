@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Heart, HeartOff } from "lucide-react";
+
 export default function Notes() {
   const user = useUser();
   const queryClient = useQueryClient();
@@ -34,7 +35,7 @@ export default function Notes() {
   const [onlyFavorites, setOnlyFavorites] = useState(false);
 
   const summarize = useSummarize();
-  const [currentSummary, setCurrentSummary] = useState("");
+  const [summaries, setSummaries] = useState<{ [key: string]: string }>({});
 
   const { data: notes, isLoading } = useQuery({
     queryKey: ["notes", filterTag, onlyFavorites],
@@ -80,7 +81,6 @@ export default function Notes() {
   return (
     <div className="space-y-4">
       {/* Input Section */}
-
       <Dialog open={addNote} onOpenChange={setAddNote}>
         <DialogTrigger asChild>
           <Button variant="default">Add a new Note</Button>
@@ -137,7 +137,8 @@ export default function Notes() {
               <h3 className="font-semibold text-lg">
                 {note.title}
                 <p className="text-sm flex gap-1 font-normal">
-                  <span>{new Date(note.created_at).toLocaleDateString()}</span>|
+                  <span>{new Date(note.created_at).toLocaleDateString()}</span>{" "}
+                  |{" "}
                   <span>{new Date(note.created_at).toLocaleTimeString()}</span>
                 </p>
               </h3>
@@ -154,7 +155,6 @@ export default function Notes() {
               </Button>
             </div>
 
-            <p className="text-xs"></p>
             <p>{note.content}</p>
             {note.tags?.length > 0 && (
               <p className="text-sm text-gray-600">
@@ -183,15 +183,19 @@ export default function Notes() {
             <Button
               onClick={() =>
                 summarize.mutate(note.content, {
-                  onSuccess: (summary) => setCurrentSummary(summary),
+                  onSuccess: (summary) =>
+                    setSummaries((prev) => ({
+                      ...prev,
+                      [note.id]: summary,
+                    })),
                 })
               }
             >
               Summarize
             </Button>
-            {currentSummary && (
+            {summaries[note.id] && (
               <div className="mt-2 text-sm italic text-gray-600 border-t pt-2">
-                <strong>Summary:</strong> {currentSummary}
+                <strong>Summary:</strong> {summaries[note.id]}
               </div>
             )}
           </div>
