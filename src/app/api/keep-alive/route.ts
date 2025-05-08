@@ -50,7 +50,7 @@ const fetchOtherEndpoints = async (): Promise<string[]> => {
 };
 
 export async function GET() {
-  const supabase = createClient(); // maybe switch to ClientSide Client
+  const supabase = await createClient(); // maybe switch to ClientSide Client
 
   let responseMessage: string = "";
   let successfulResponses: boolean = true;
