@@ -38,7 +38,7 @@ export default function AuthForm({ type }: { type: "login" | "signup" }) {
   };
 
   return (
-    <div className="max-w-md w-full p-4 border rounded-xl shadow-xl space-y-4 text-center">
+    <div className="max-w-md w-full p-4 border rounded-xl shadow-xl space-y-4 text-center dark:bg-neutral-700">
       <h2 className="text-xl font-bold">
         {type === "login" ? "Log In" : "Sign Up"}
       </h2>
