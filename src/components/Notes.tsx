@@ -157,7 +157,7 @@ export default function Notes() {
 
             <p>{note.content}</p>
             {note.tags?.length > 0 && (
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 <strong>Tags:</strong> {note.tags.join(", ")}
               </p>
             )}
@@ -194,7 +194,7 @@ export default function Notes() {
               Summarize
             </Button>
             {summaries[note.id] && (
-              <div className="mt-2 text-sm italic text-gray-600 border-t pt-2">
+              <div className="mt-2 text-sm italic text-gray-600 border-t pt-2 dark:text-gray-400">
                 <strong>Summary:</strong> {summaries[note.id]}
               </div>
             )}
