@@ -38,7 +38,7 @@ export default function AuthForm({ type }: { type: "login" | "signup" }) {
   };
 
   return (
-    <div className="max-w-md w-full p-4 border rounded-xl shadow-xl space-y-4 text-center dark:bg-neutral-700">
+    <div className="max-w-md w-full p-4 border rounded-xl shadow-xl space-y-4 text-center dark:bg-neutral-900">
       <h2 className="text-xl font-bold">
         {type === "login" ? "Log In" : "Sign Up"}
       </h2>
@@ -53,7 +53,7 @@ export default function AuthForm({ type }: { type: "login" | "signup" }) {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <Button onClick={handleAuth} disabled={loading}>
+      <Button onClick={handleAuth} disabled={loading} variant="secondary">
         {loading ? "Loading..." : type === "login" ? "Login" : "Sign Up"}
       </Button>
       <p className="space-x-1">
